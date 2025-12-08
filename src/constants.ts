@@ -1,3 +1,6 @@
+import { getcolor } from './blackbody'
+import type { GraphNode } from './types'
+
 const LDR_URLS = [
   '/static/skybox/right.png',
   '/static/skybox/left.png',
@@ -25,8 +28,11 @@ const graphconfig = {
   },
   colors: {
     node: {
-      default: (i: number) => `rgba(150,150,150,${i / 30})`,
-      leaves: () => `rgba(100,100,100,0.5)`,
+      default: (n: GraphNode) => {
+        if (n.peers.size == 1) return `rgba(200,100,100,${n.val / 30})`
+        const c = getcolor(parseFloat(n.centrality))
+        return `rgba(${c.r},${c.g},${c.b},${n.val / 30})`
+      },
       selected: (i: number) => `rgba(100,255,255,${i / 10})`,
       adj1: (i: number) => `rgba(255,200,0,${i / 30})`,
       adj2: (i: number) => `rgba(255,30,0,${i / 20})`,

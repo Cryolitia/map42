@@ -300,7 +300,7 @@ onMounted(() => {
   }
 
   const g = ForceGraph3D({
-    controlType: 'orbit',
+    controlType: 'trackball',
     rendererConfig: { antialias: true, alpha: true },
   })(container.value!)
 
@@ -349,8 +349,7 @@ onMounted(() => {
       return graphconfig.colors.node.selected(node.val)
     if (highlightNodes.value.has(node.id)) return graphconfig.colors.node.adj1(node.val)
     if (highlight2Nodes.value.has(node.id)) return graphconfig.colors.node.adj2(node.val)
-    if (node.peers.size == 1) return graphconfig.colors.node.leaves()
-    return graphconfig.colors.node.default(node.val)
+    return graphconfig.colors.node.default(node)
   })
 
   g.linkColor((link: GraphLink) => {
