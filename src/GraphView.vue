@@ -321,6 +321,8 @@ onMounted(() => {
   const { nodes, links } = processData(props.data.nodes, props.data.edges)
   g.graphData({ nodes, links })
 
+  g.d3Force('link').distance(200)
+
   const controls = g.controls()
 
   controls.maxDistance = 4000
