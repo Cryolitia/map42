@@ -6,14 +6,14 @@
 export const getcolor = (centrality: number): { r: number; g: number; b: number } => {
 
   // --- Tuning Constants ---
-  const MAX_EXPECTED_CENTRALITY = 0.5; // Upper bound for normalization
-  const MIN_TEMP_KELVIN = 800;        // Deep Red (Cool stars/Brown Dwarfs)
+  const MAX_EXPECTED_CENTRALITY = 0.4; // Upper bound for normalization
+  const MIN_TEMP_KELVIN = 1500;        // Deep Red (Cool stars/Brown Dwarfs)
   const MAX_TEMP_KELVIN = 30000;       // Blue Giant (O-type stars)
 
   // Non-linear scaling factor.
   // < 1.0 expands the color variance for small centrality values.
   // 0.4 makes 0.001 visible as dim red, 0.0x as orange/yellow.
-  const DISTRIBUTION_EXPONENT = 0.4;
+  const DISTRIBUTION_EXPONENT = 0.5;
 
   // --- Logic ---
 
