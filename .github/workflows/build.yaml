@@ -1,0 +1,51 @@
+name: Build and deploy to GitHub Pages
+
+on:
+    push:
+        branches: [ "main", "master" ]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        outputs:
+            artifact-path: ${{ steps.upload.outputs.artifact-path || 'dist' }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v3
+              with:
+                version: latest
+                run_install: true
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                cache: pnpm
+                node-version: current
+
+            - name: Build
+              env:
+                NODE_OPTIONS: --max_old_space_size=4096
+              run: |
+                pnpm run build-only
+
+            - name: Upload Pages artifact
+              id: upload
+              uses: actions/upload-pages-artifact@v4
+              with:
+                path: ./dist
+
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to GitHub Pages
+              uses: actions/deploy-pages@v4
