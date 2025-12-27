@@ -1,21 +1,12 @@
 <template>
   <div class="app-container">
-    <!-- 版本切换按钮组 -->
-    <div class="version-toggle">
-      <button
-        :class="{ active: currentVersion === 'ipv4' }"
-        @click="switchVersion('ipv4')"
-      >
-        IPv4
-      </button>
-      <button
-        :class="{ active: currentVersion === 'ipv6' }"
-        @click="switchVersion('ipv6')"
-      >
-        IPv6
-      </button>
-    </div>
-
+    <input
+      class="data-source"
+      id="data-source"
+      type="url"
+      placeholder="Where net data is fetched from..."
+      @input="onInput"
+    />
     <GraphView v-if="graphData" :data="graphData" />
     <div v-else class="loading">Loading graph data...</div>
   </div>
@@ -27,26 +18,32 @@ import GraphView from './GraphView.vue';
 import type { MapData } from './types'; // 假设 MapData 导出自 types
 
 const graphData = ref<MapData | null>(null);
-const currentVersion = ref<'ipv4' | 'ipv6'>('ipv6'); // 默认为 IPv6
 
-const loadData = async (version: 'ipv4' | 'ipv6') => {
+const loadData = async (url: string | null) => {
   graphData.value = null; // 可选：清空以触发重新挂载或显示 Loading
+  if (!url) return;
   try {
-    const r = await fetch(`https://bgp-data.strexp.net/graph/${version}.json`);
+    const r = await fetch(url);
     graphData.value = await r.json();
-    currentVersion.value = version;
   } catch (e) {
     console.error('Failed to load data:', e);
   }
 };
 
-const switchVersion = (version: 'ipv4' | 'ipv6') => {
-  if (currentVersion.value === version && graphData.value) return;
-  loadData(version);
+const onInput = (e: Event) => {
+  const target = e.target as HTMLInputElement | null;
+  const value = target?.value ?? null;
+  loadData(value);
 };
 
 onMounted(() => {
-  loadData('ipv6');
+  const urlParams = new URLSearchParams(window.location.search);
+  const source = urlParams.get('source');
+  const el = document.getElementById('data-source');
+  const inputEl = el as HTMLInputElement | null;
+  inputEl?.focus();
+  if (inputEl) inputEl.value = source ?? '';
+  loadData(source);
 });
 </script>
 
@@ -72,7 +69,7 @@ body {
   font-size: 1.2rem;
 }
 
-.version-toggle {
+.data-source {
   position: absolute;
   top: 20px;
   left: 290px;
@@ -82,31 +79,12 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   overflow: hidden;
-}
-
-.version-toggle button {
-  background: transparent;
-  border: none;
   color: #888;
   padding: 10px 16px;
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  width: 50%;
 }
 
-.version-toggle button:last-child {
-  border-right: none;
-}
-
-.version-toggle button:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.version-toggle button.active {
-  background: rgba(0, 188, 212, 0.2);
-  color: #00bcd4;
-  font-weight: bold;
-}
 </style>
