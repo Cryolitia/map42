@@ -38,7 +38,7 @@ const graphconfig = {
       adj2: (i: number) => `rgba(255,30,0,${i / 20})`,
     },
     edge: {
-      default: 'rgba(255,255,255,0.15)',
+      default: 'rgba(255,255,255,0.5)',
       adj1: 'rgba(0,255,255,0.4)',
       adj2: 'rgba(255,60,150,0.2)',
       others: 'rgba(255,255,255,0.1)',
@@ -46,7 +46,7 @@ const graphconfig = {
   },
   size: {
     link: {
-      default: 0,
+      default: 0.2,
       adj1: 0.4,
       adj2: 0.3,
       others: 0.13,
